@@ -1,0 +1,63 @@
+{
+  "name": "import-lcov",
+  "displayName": "Import lcov",
+  "description": "Import lcov.info files into the VS Code test coverage view.",
+  "publisher": "gregoire",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/71/vscode-import-lcov"
+  },
+  "engines": {
+    "vscode": "^1.88.0"
+  },
+  "categories": [
+    "Testing",
+    "Other"
+  ],
+  "license": "ISC",
+  "main": "./out/extension.js",
+  "extensionKind": [
+    "ui"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "configuration": {
+      "title": "Import lcov",
+      "properties": {
+        "import-lcov.lcovFiles": {
+          "type": [
+            "array",
+            "string"
+          ],
+          "description": "Globs of lcov files to import.",
+          "default": "**/lcov.info"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "yarn run build",
+    "build": "esbuild src/extension.ts --outfile=out/extension.js --bundle --format=cjs --minify --keep-names --target=es2021 --external:fs --external:path --external:vscode --alias:node:stream=./src/stream-shim.ts",
+    "check": "yarn run type-check && yarn run lint",
+    "lint": "eslint src --ext ts",
+    "type-check": "tsc --noEmit",
+    "watch": "yarn run build --watch --sourcemap"
+  },
+  "devDependencies": {
+    "@types/node": "18.x",
+    "@types/vscode": "^1.88.0",
+    "@typescript-eslint/eslint-plugin": "^7.7.1",
+    "@typescript-eslint/parser": "^7.7.1",
+    "@vscode/vsce": "^2.26.0",
+    "esbuild": "^0.20.2",
+    "eslint": "^8.56.0",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "@friedemannsommer/lcov-parser": "^3.1.1",
+    "demangle": "^1.0.1"
+  }
+}
