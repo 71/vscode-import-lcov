@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 import parseLcov, { SectionSummary } from "@friedemannsommer/lcov-parser";
-// @ts-expect-error: no types available.
-import { demangle } from "demangle";
+import { loadDemangle } from "./demangle";
 
 interface Configuration {
   lcovFiles: string[];
@@ -203,11 +202,16 @@ export function activate(context: vscode.ExtensionContext) {
     },
   );
 
-  coverageProfile.loadDetailedCoverage = (_, fileCoverage) => {
+  let demangle:
+    | undefined
+    | Promise<{ (mangled: string): string }>
+    | { (mangled: string): string };
+
+  coverageProfile.loadDetailedCoverage = async (_, fileCoverage) => {
     const section = testRunData.get(fileCoverage);
 
     if (section === undefined) {
-      return Promise.resolve([]);
+      return [];
     }
 
     const details: vscode.FileCoverageDetail[] = [];
@@ -240,7 +244,22 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     for (const fn of section.functions.details) {
-      const name = demangle(fn.name) ?? fn.name;
+      if (fn.name.length === 0) {
+        continue;
+      }
+
+      let name = fn.name;
+
+      if (/^_{1,3}Z/.test(name)) {
+        if (demangle === undefined) {
+          demangle = loadDemangle(context);
+          demangle = await demangle;
+        } else if (demangle instanceof Promise) {
+          demangle = await demangle;
+        }
+
+        name = demangle(name);
+      }
 
       details.push(
         new vscode.DeclarationCoverage(
@@ -251,7 +270,7 @@ export function activate(context: vscode.ExtensionContext) {
       );
     }
 
-    return Promise.resolve(details);
+    return details;
   };
 }
 

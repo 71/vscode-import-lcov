@@ -4,10 +4,12 @@
     "target": "ES2022",
     "outDir": "out",
     "lib": [
+      "DOM",
       "ES2022"
     ],
     "sourceMap": true,
     "rootDir": "src",
+    "checkJs": true,
     "strict": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,

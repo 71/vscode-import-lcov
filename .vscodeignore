@@ -2,5 +2,6 @@
 */
 !LICENSE
 !README.md
-!out/**.js
+!out/*.js
+!out/*.wasm
 !package.json

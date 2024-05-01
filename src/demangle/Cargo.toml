@@ -1,0 +1,11 @@
+[package]
+name = "demangle"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+cpp_demangle = { version = "0.4.3", default-features = false, features = ["alloc"] }
+wee_alloc = "0.4.5"
